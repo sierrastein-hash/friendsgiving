@@ -252,7 +252,7 @@ const saveMine = v => { try { v ? localStorage.setItem(STORE, JSON.stringify(v))
 const demo = {
   seats: [
     { id: 'd1', seat: 0, name: 'Maya', dish: 'mashed potatoes', plus: '', plusDish: '' },
-    { id: 'd2', seat: 3, name: 'Theo', dish: 'maple pecan pie', plus: 'Sam', plusDish: 'a very good red' },
+    { id: 'd2', seat: 3, name: 'Theo', dish: 'maple pecan pie', plus: 'Sam', plusDish: 'a very good red', guestSeat: 2 },
     { id: 'd3', seat: 4, name: 'Priya', dish: 'cider', plus: '', plusDish: '' },
     { id: 'd4', seat: 7, name: 'Jonah', dish: '', plus: '', plusDish: '' },
   ],
@@ -261,13 +261,15 @@ const demo = {
     { name: 'Marcus', dish: 'brown butter sweet potatoes' },
     { name: 'Ana', dish: 'pumpkin tiramisu' },
   ],
-  firstFree() { const t = new Set(this.seats.map(s => s.seat)); let i = 0; while (t.has(i)) i++; return i; },
+  firstFree() { const t = new Set(plates(this.seats).map(p => p.seat)); let i = 0; while (t.has(i)) i++; return i; },
   call(body) {
     if (body.action === 'remove') { this.seats = this.seats.filter(s => s.id !== body.id); return { ok: true, seats: this.seats }; }
-    const taken = this.seats.some(s => s.seat === body.seat && s.id !== body.id);
+    const others = new Set(plates(this.seats.filter(s => s.id !== body.id)).map(p => p.seat));
     const old = this.seats.find(s => s.id === body.id);
-    const seat = taken || body.seat == null ? (old ? old.seat : this.firstFree()) : body.seat;
-    const row = { id: body.id || 'me' + Date.now(), seat, name: body.name, dish: body.dish, plus: body.plus, plusDish: body.plus ? body.plusDish : '' };
+    const seat = others.has(body.seat) || body.seat == null ? (old ? old.seat : this.firstFree()) : body.seat;
+    let guestSeat = seat ^ 1;
+    for (let d = 1; others.has(guestSeat) || guestSeat === seat; d++) guestSeat = seat + d;
+    const row = { id: body.id || 'me' + Date.now(), seat, name: body.name, dish: body.dish, plus: body.plus, plusDish: body.plus ? body.plusDish : '', guestSeat: body.plus ? guestSeat : null };
     this.seats = this.seats.filter(s => s.id !== row.id).concat(row);
     return { ok: true, id: row.id, token: 'demo', seat, seats: this.seats };
   },
@@ -285,6 +287,11 @@ async function post(body) {
 
 /* ---------- live table ---------- */
 const dishes = s => [s.dish, s.plusDish].filter(Boolean).join(' + ');
+// One plate per person: a row with a guest fills two seats.
+const plates = (rows = table) => rows.flatMap(s => {
+  const own = { id: s.id, seat: s.seat, name: s.name, dish: s.dish };
+  return s.plus ? [own, { id: s.id, seat: s.guestSeat, name: s.plus, dish: s.plusDish }] : [own];
+});
 
 let table = [], mine = loadMine(), target = null, firstPaint = true, online = true;
 let writes = 0, polling = false;
@@ -319,13 +326,14 @@ function apply(seats) {
 }
 
 function seatCount() {
-  const top = table.reduce((n, s) => Math.max(n, s.seat + 1), 0);
-  const want = Math.max(6, Math.max(top, table.length) + 2);
+  const all = plates();
+  const top = all.reduce((n, p) => Math.max(n, p.seat + 1), 0);
+  const want = Math.max(6, Math.max(top, all.length) + 2);
   return want + want % 2;
 }
 
 function seatEl(i, fresh) {
-  const who = table.find(s => s.seat === i);
+  const who = plates().find(p => p.seat === i);
   const b = document.createElement('button');
   b.type = 'button';
   b.className = 'seat';
@@ -347,14 +355,14 @@ function seatEl(i, fresh) {
     return b;
   }
   const isMine = mine && who.id === mine.id;
-  const food = dishes(who);
+  const food = who.dish;
   plate.style.setProperty('--rim', RIMS[i % RIMS.length]);
   plate.innerHTML = '<span></span>';
   plate.firstChild.textContent = food || 'tbd';
   if (!food) plate.classList.add('tbd');
   const place = document.createElement('div');
   place.className = 'place';
-  place.textContent = who.plus ? `${who.name} + ${who.plus}` : who.name;
+  place.textContent = who.name;
   b.append(place);
   if (isMine) b.classList.add('mine');
   if (fresh.has(who.id)) b.classList.add('arrive');
@@ -402,7 +410,7 @@ function renderTally() {
   live.innerHTML = '<i></i>';
   live.append(DEMO ? 'preview' : online ? 'live' : 'reconnecting');
   bar.append(live);
-  const people = table.reduce((n, s) => n + 1 + (s.plus ? 1 : 0), 0);
+  const people = plates().length;
   const total = document.createElement('span');
   total.className = 'count';
   total.innerHTML = `<b>${people}</b>`;
@@ -419,7 +427,7 @@ function renderTally() {
   };
   const made = table.reduce((n, s) => n + (s.dish ? 1 : 0) + (s.plusDish ? 1 : 0), 0);
   count(made, made === 1 ? 'dish' : 'dishes', 'var(--persimmon-bright)');
-  count(table.filter(s => !s.dish).length, 'still deciding', 'var(--line)');
+  count(plates().filter(p => !p.dish).length, 'still deciding', 'var(--line)');
 }
 
 let toastTimer;
@@ -531,9 +539,10 @@ $('seats').addEventListener('click', e => {
   const b = e.target.closest('.seat');
   if (!b) return;
   const i = Number(b.dataset.seat);
-  const who = table.find(s => s.seat === i);
-  if (!who || (mine && who.id === mine.id)) openSheet(i);
-  else toast(dishes(who) ? `${who.name}'s got ${dishes(who)}` : `${who.name}'s still deciding`);
+  const who = plates().find(p => p.seat === i);
+  if (!who) openSheet(i);
+  else if (mine && who.id === mine.id) openSheet(table.find(s => s.id === mine.id).seat);
+  else toast(who.dish ? `${who.name}'s got ${who.dish}` : `${who.name}'s still deciding`);
 });
 $('form').addEventListener('submit', submit);
 $('dish').addEventListener('input', hint);
