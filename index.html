@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>friendsgiving</title>
+<meta name="description" content="pull up a chair.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#a9441f">
+<meta property="og:title" content="friendsgiving">
+<meta property="og:description" content="pull up a chair.">
+<meta property="og:image" content="https://sierrastein-hash.github.io/friendsgiving/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,144,500,100,1;1,144,500,100,1&family=Reenie+Beanie&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --persimmon: #a9441f; --persimmon-bright: #cf6a2c; --cream: #f7eedc; --cloth: #f3e8d3;
+    --check: rgba(169, 68, 31, .085); --ink: #2c1a12; --ink-soft: #6a5240; --plate: #fcf8ee;
+    --oxblood: #6b1d1d; --olive: #5c6130; --mustard: #c88f1f; --plum: #4a2340; --line: #cdb99a;
+    --starter: var(--olive); --side: var(--persimmon); --dessert: var(--mustard); --drink: var(--plum); --tbd: var(--line);
+    --hand: 'Reenie Beanie', 'Bradley Hand', cursive;
+    --display: 'Fraunces', Georgia, serif;
+    --body: 'DM Sans', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { background: var(--persimmon); -webkit-text-size-adjust: 100%; }
+  body { font-family: var(--body); color: var(--ink); background: var(--persimmon); min-height: 100svh; }
+  button, input { font: inherit; color: inherit; }
+  button { background: none; border: 0; cursor: pointer; }
+  :focus-visible { outline: 2.5px solid var(--oxblood); outline-offset: 3px; border-radius: 4px; }
+
+  .layout { display: grid; grid-template-columns: 1fr; }
+
+  /* the wall behind the table */
+  .hero { color: var(--cream); padding: max(28px, env(safe-area-inset-top)) 20px 0; position: relative; overflow: hidden; }
+  .eyebrow { font-family: var(--hand); font-size: 27px; line-height: 1; transform: rotate(-2deg); transform-origin: left; }
+  h1 { font-family: var(--display); font-weight: 500; font-size: clamp(90px, 31vw, 150px); line-height: .82; letter-spacing: -.035em; margin: 12px 0 30px -3px; }
+  h1 em { display: block; margin-left: .42em; }
+  .details { font-size: 16px; line-height: 1.45; max-width: 25em; }
+  .details strong { font-weight: 700; display: block; font-size: 18px; }
+  .pick { font-family: var(--hand); font-size: 30px; line-height: 1; display: flex; align-items: flex-end; gap: 8px; margin: 18px 0 2px; }
+  .pick svg { width: 34px; height: 44px; flex: none; }
+  .frieze { display: none; position: absolute; pointer-events: none; }
+  .address { margin-top: 12px; display: inline-block; background: var(--cream); color: var(--ink); border-radius: 4px; padding: 9px 13px; font-size: 15px; font-weight: 500; transform: rotate(-.6deg); }
+  .address[hidden] { display: none; }
+
+  /* the cloth */
+  .cloth {
+    position: relative; margin-top: 16px; padding: 18px 8px calc(96px + env(safe-area-inset-bottom));
+    background-color: var(--cloth);
+    background-image: linear-gradient(var(--check) 50%, transparent 50%), linear-gradient(90deg, var(--check) 50%, transparent 50%);
+    background-size: 44px 44px; background-position: center top;
+    min-height: 70svh;
+  }
+  .cloth::before {
+    content: ''; position: absolute; left: 0; right: 0; top: -13px; height: 14px;
+    background: radial-gradient(circle at 14px 14px, var(--cloth) 13.5px, transparent 14px) 0 0 / 28px 14px repeat-x;
+  }
+  .table { max-width: 520px; margin: 0 auto; }
+
+  .head { display: flex; justify-content: center; align-items: flex-end; padding: 4px 0 10px; }
+  .head svg { width: 54px; height: 116px; flex: none; }
+  .head .wheat-l, .head .wheat-r { width: 40px; height: 96px; }
+  .wheat-l { transform: rotate(-16deg); margin-right: 10px; }
+  .wheat-r { transform: rotate(16deg) scaleX(-1); margin-left: 10px; }
+
+  .row { display: grid; grid-template-columns: minmax(0, 1fr) 46px minmax(0, 1fr); align-items: start; }
+  .decor { display: flex; justify-content: center; padding-top: 26px; }
+  .decor svg { width: 46px; height: 100px; }
+
+  .seat { position: relative; display: flex; flex-direction: column; align-items: center; width: 100%; padding: 8px 0 14px; border-radius: 12px; -webkit-tap-highlight-color: transparent; }
+  .setting { display: flex; align-items: center; justify-content: center; gap: 2px; }
+  .cutlery { width: 11px; height: 74px; flex: none; color: var(--ink); opacity: .72; }
+  .plate { width: clamp(106px, 28vw, 136px); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; text-align: center; padding: 15%; font-family: var(--hand); font-size: 21px; line-height: .92; overflow-wrap: anywhere; background: var(--plate); border: 1.5px solid var(--ink); box-shadow: inset 0 0 0 5px var(--plate), inset 0 0 0 7.5px var(--rim, var(--line)); transition: transform .18s; }
+  .plate.long { font-size: 18px; }
+  .plate.tbd { color: var(--ink-soft); }
+  .place { margin-top: -11px; position: relative; max-width: 96%; padding: 3px 11px 2px; background: #fff9ec; border: 1px solid var(--ink); border-radius: 2px; font-family: var(--display); font-size: 15px; line-height: 1.2; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 1.5px 2px 0 var(--ink); transform: rotate(var(--tilt, -1.5deg)); }
+
+  .seat.open .plate { background: rgba(252, 248, 238, .55); border: 1.5px dashed #9b8064; box-shadow: none; color: var(--persimmon); font-size: 25px; }
+  .seat.open .cutlery { opacity: .22; }
+  .seat.open:hover .plate, .seat.open:focus-visible .plate { background: var(--plate); transform: scale(1.04) rotate(-2deg); }
+  .seat.mine .place { background: var(--ink); color: var(--cream); }
+  .seat.mine::after { content: 'you'; position: absolute; top: 4px; right: 12%; background: var(--persimmon); color: var(--cream); font-family: var(--hand); font-size: 19px; line-height: 1; padding: 1px 7px 3px; border-radius: 10px; transform: rotate(6deg); }
+  .seat.arrive .plate { animation: set .55s cubic-bezier(.2, 1.5, .4, 1) both; }
+  .seat.arrive .place { animation: card .4s .22s both; }
+  @keyframes set { from { transform: translateY(-34px) scale(1.2) rotate(-16deg); opacity: 0; } }
+  @keyframes card { from { transform: translateY(10px) rotate(7deg); opacity: 0; } }
+
+  /* what's on the table */
+  .tally { position: fixed; z-index: 5; left: 0; right: 0; bottom: 0; background: var(--ink); color: var(--cream); padding: 11px 16px calc(11px + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 10px 14px; font-size: 14px; line-height: 1.2; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+  .tally::-webkit-scrollbar { display: none; }
+  .live { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; flex: none; }
+  .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--persimmon-bright); animation: beat 2.4s infinite; }
+  .live.off i { background: #8a7a6c; animation: none; }
+  @keyframes beat { 50% { opacity: .35; } }
+  .count { display: inline-flex; align-items: center; gap: 6px; flex: none; }
+  .count b { font-weight: 700; }
+  .count i { width: 9px; height: 9px; border-radius: 50%; background: var(--dot); border: 1px solid rgba(247, 238, 220, .55); }
+
+  .toast { position: fixed; z-index: 6; left: 50%; bottom: calc(58px + env(safe-area-inset-bottom)); width: max-content; max-width: calc(100vw - 32px); transform: translate(-50%, 14px); opacity: 0; background: var(--plate); border: 1.5px solid var(--ink); box-shadow: 2px 3px 0 var(--ink); border-radius: 3px; padding: 7px 14px 5px; font-family: var(--hand); font-size: 24px; line-height: 1; text-align: center; transition: .28s; pointer-events: none; }
+  .toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+  .demo { position: absolute; top: 10px; left: 20px; }
+  .demo-tag { font-size: 12px; font-weight: 700; letter-spacing: .02em; }
+
+  /* the seat card */
+  dialog { border: 0; padding: 0; margin: auto 0 0; width: 100%; max-width: none; background: var(--cream); color: var(--ink); border-radius: 16px 16px 0 0; max-height: 92svh; }
+  dialog[open] { animation: rise .26s ease-out; }
+  @keyframes rise { from { transform: translateY(40px); opacity: 0; } }
+  dialog::backdrop { background: rgba(44, 26, 18, .58); }
+  .sheet { padding: 22px 20px calc(22px + env(safe-area-inset-bottom)); position: relative; }
+  .sheet h2 { font-family: var(--display); font-weight: 500; font-style: italic; font-size: 36px; line-height: 1; letter-spacing: -.02em; margin-right: 44px; }
+  .close { position: absolute; top: 14px; right: 12px; width: 44px; height: 44px; font-size: 26px; line-height: 1; color: var(--ink-soft); }
+  label, .label { display: block; font-size: 14px; font-weight: 700; margin: 17px 0 6px; }
+  input[type=text] { width: 100%; height: 48px; padding: 0 2px; background: none; border: 0; border-bottom: 1.5px solid var(--ink); border-radius: 0; font-family: var(--hand); font-size: 29px; outline: 0; }
+  input[type=text]:focus { border-bottom-width: 2.5px; border-color: var(--persimmon); }
+  input[type=text]::placeholder { color: #a8927a; }
+  .cats { display: flex; flex-wrap: wrap; gap: 7px; }
+  .cat { min-height: 42px; padding: 0 14px; border: 1.5px solid var(--ink); border-radius: 21px; font-size: 15px; font-weight: 500; display: inline-flex; align-items: center; gap: 7px; }
+  .cat i { width: 10px; height: 10px; border-radius: 50%; background: var(--dot); }
+  .cat[aria-pressed=true] { background: var(--ink); color: var(--cream); }
+  .hint { min-height: 20px; margin-top: 6px; font-size: 14px; color: var(--oxblood); }
+  .plus-toggle { margin-top: 12px; min-height: 40px; font-size: 15px; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; padding: 0; }
+  .go { display: block; width: 100%; height: 54px; margin-top: 18px; background: var(--persimmon); color: var(--cream); border-radius: 4px; font-family: var(--display); font-size: 21px; font-weight: 500; box-shadow: 2.5px 3px 0 var(--ink); transition: transform .1s; }
+  .go:active { transform: translate(2px, 2px); box-shadow: .5px 1px 0 var(--ink); }
+  .go:disabled { opacity: .6; cursor: wait; }
+  .leave { display: block; margin: 12px auto 0; min-height: 40px; font-size: 14px; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; }
+  .error { color: var(--oxblood); font-size: 14px; font-weight: 500; margin-top: 10px; }
+  .done p { font-size: 16px; line-height: 1.45; margin-top: 12px; }
+  .done .addr { background: var(--plate); border: 1.5px solid var(--ink); padding: 12px 14px; border-radius: 3px; font-weight: 500; }
+  [hidden] { display: none !important; }
+
+  @media (min-width: 880px) {
+    .layout { grid-template-columns: minmax(380px, 42vw) 1fr; }
+    .hero { position: sticky; top: 0; height: 100svh; padding: 48px 44px; display: flex; flex-direction: column; }
+    h1 { font-size: clamp(96px, 10.4vw, 172px); margin-top: 18px; }
+    .details { font-size: 18px; margin-top: 8px; }
+    .details strong { font-size: 21px; }
+    .pick { margin-top: auto; font-size: 38px; }
+    .pick svg { transform: rotate(-78deg); }
+    .frieze { display: block; width: 130px; bottom: 24px; right: 20px; }
+    .cloth { margin-top: 0; padding: 36px 24px 100px; min-height: 100svh; }
+    .cloth::before { top: 0; bottom: 0; left: -13px; right: auto; width: 14px; height: auto; background: radial-gradient(circle at 14px 14px, var(--cloth) 13.5px, transparent 14px) 0 0 / 14px 28px repeat-y; }
+    .table { max-width: 620px; }
+    .row { grid-template-columns: minmax(0, 1fr) 76px minmax(0, 1fr); }
+    .plate { width: 150px; font-size: 25px; }
+    .plate.long { font-size: 21px; }
+    .place { font-size: 17px; }
+    .decor svg { width: 62px; height: 134px; }
+    .cutlery { height: 92px; width: 13px; }
+    .tally { left: max(380px, 42vw); }
+    dialog { margin: auto; width: 460px; border-radius: 6px; box-shadow: 5px 6px 0 var(--ink); }
+    .toast { bottom: 66px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="fork" viewBox="0 0 12 80"><path d="M2 2v15c0 4 2 6 4 7v0c2-1 4-3 4-7V2M6 2v18M6 24v53" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    <symbol id="knife" viewBox="0 0 12 80"><path d="M4 2c5 4 6 16 6 30H5.5zM5.5 32v45" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="pear" viewBox="0 0 62 134"><g transform="translate(5 26)"><path d="M26 16C24 26 13 32 11 49c-2 18 6 31 16 31s19-13 17-31C42 32 30 26 28 16z" fill="#c88f1f" stroke="#2c1a12" stroke-width="1.8"/><path d="M27 17c0-5 1-9 4-13" fill="none" stroke="#2c1a12" stroke-width="2.4" stroke-linecap="round"/><path d="M31 8c5-5 13-5 18-2-4 6-12 8-18 2z" fill="#5c6130" stroke="#2c1a12" stroke-width="1.4"/><path d="M19 56c1 6 3 10 7 13" fill="none" stroke="#2c1a12" stroke-width="1.2" stroke-linecap="round"/></g></symbol>
+    <symbol id="persimmon" viewBox="0 0 62 134"><g transform="translate(6 30)"><circle cx="25" cy="42" r="22" fill="#cf6a2c" stroke="#2c1a12" stroke-width="1.8"/><path d="M25 21c-5-7-13-7-17-5 1 5 6 9 12 9-5 3-6 8-5 12 5 0 9-3 10-8 1 5 5 8 10 8 1-4 0-9-5-12 6 0 11-4 12-9-4-2-12-2-17 5z" fill="#5c6130" stroke="#2c1a12" stroke-width="1.4" stroke-linejoin="round"/></g></symbol>
+    <symbol id="candle" viewBox="0 0 62 134"><path d="M31 12c6 8 7 13 3 18-2 3-6 3-8 0-3-5 0-10 5-18z" fill="#c88f1f" stroke="#2c1a12" stroke-width="1.5"/><path d="M31 31v6" stroke="#2c1a12" stroke-width="1.6"/><path d="M26 37h10l2 66H24z" fill="#6b1d1d" stroke="#2c1a12" stroke-width="1.8" stroke-linejoin="round"/><path d="M13 104h36c1 7-5 11-18 11s-19-4-18-11z" fill="#fcf8ee" stroke="#2c1a12" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="glass" viewBox="0 0 62 134"><path d="M15 22h32c2 22-3 38-16 38S13 44 15 22z" fill="#fcf8ee" stroke="#2c1a12" stroke-width="1.8"/><path d="M15.6 36h30.8C46 50 41 60 31 60S16 50 15.6 36z" fill="#4a2340"/><path d="M31 60v44M17 106c6-3 22-3 28 0" fill="none" stroke="#2c1a12" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="wheat" viewBox="0 0 40 96"><g fill="#c88f1f" stroke="#2c1a12" stroke-width="1"><ellipse cx="20" cy="9" rx="3.4" ry="7"/><ellipse cx="13" cy="19" rx="3.2" ry="7" transform="rotate(-24 13 19)"/><ellipse cx="27" cy="19" rx="3.2" ry="7" transform="rotate(24 27 19)"/><ellipse cx="13" cy="32" rx="3.2" ry="7" transform="rotate(-24 13 32)"/><ellipse cx="27" cy="32" rx="3.2" ry="7" transform="rotate(24 27 32)"/><ellipse cx="13" cy="45" rx="3.2" ry="7" transform="rotate(-24 13 45)"/><ellipse cx="27" cy="45" rx="3.2" ry="7" transform="rotate(24 27 45)"/></g><path d="M20 14v80" stroke="#2c1a12" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+
+<div class="layout">
+  <header class="hero">
+    <svg class="frieze" viewBox="0 0 62 134" aria-hidden="true"><use href="#persimmon"/></svg>
+    <p class="eyebrow" id="eyebrow"></p>
+    <h1>friends<em>giving</em></h1>
+    <p class="details"><strong id="when"></strong><span id="where"></span></p>
+    <p class="address" id="address" hidden></p>
+    <p class="pick"><span id="pick">pick a plate, any plate</span>
+      <svg viewBox="0 0 34 44" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3c-3 14 3 27 21 36"/><path d="M15 40l12-1-4-12"/></svg>
+    </p>
+  </header>
+
+  <main class="cloth">
+    <div class="table">
+      <div class="head" aria-hidden="true">
+        <svg class="wheat-l" viewBox="0 0 40 96"><use href="#wheat"/></svg>
+        <svg viewBox="0 0 62 134"><use href="#persimmon"/></svg>
+        <svg viewBox="0 0 62 134"><use href="#candle"/></svg>
+        <svg viewBox="0 0 62 134"><use href="#pear"/></svg>
+        <svg class="wheat-r" viewBox="0 0 40 96"><use href="#wheat"/></svg>
+      </div>
+      <div id="seats"></div>
+    </div>
+  </main>
+</div>
+
+<div class="tally" id="tally"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<dialog id="dialog" aria-labelledby="sheet-title">
+  <div class="sheet">
+    <button class="close" id="close" aria-label="close">×</button>
+
+    <form id="form" novalidate>
+      <h2 id="sheet-title"></h2>
+      <label for="name">your name</label>
+      <input type="text" id="name" maxlength="30" autocomplete="given-name" autocapitalize="words" placeholder="first name's fine">
+
+      <p class="label" id="cats-label">what's for the table?</p>
+      <div class="cats" id="cats" role="group" aria-labelledby="cats-label"></div>
+
+      <div id="dish-wrap">
+        <label for="dish">the dish</label>
+        <input type="text" id="dish" maxlength="44" autocomplete="off">
+      </div>
+      <p class="hint" id="hint"></p>
+
+      <button type="button" class="plus-toggle" id="plus-toggle">+ bringing someone</button>
+      <div id="plus-wrap" hidden>
+        <label for="plus">their name</label>
+        <input type="text" id="plus" maxlength="30" autocomplete="off" autocapitalize="words">
+      </div>
+
+      <p class="error" id="error" role="alert" hidden></p>
+      <button class="go" id="go" type="submit"></button>
+      <button class="leave" id="leave" type="button" hidden>give up my seat</button>
+    </form>
+
+    <div class="done" id="done" hidden>
+      <h2 id="done-title"></h2>
+      <p id="done-copy"></p>
+      <p class="addr" id="done-addr" hidden></p>
+      <button class="go" id="done-go" type="button">see the table</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+const CONFIG = {
+  endpoint: '',                                   // the Apps Script web app URL
+  poll: 5000,
+  eyebrow: "come eat at sierra's",
+  when: 'sunday, november 15 · time tbd',
+  where: "at sierra's. address shows up once you've got a seat.",
+};
+
+const CATS = {
+  starter: { label: 'starter', plural: 'starters', dot: 'var(--starter)', eg: 'whipped feta + hot honey' },
+  main:    { label: 'main',    plural: 'mains',    dot: 'var(--oxblood)', eg: 'a whole turkey, you hero' },
+  side:    { label: 'side',    plural: 'sides',    dot: 'var(--side)',    eg: 'brown butter sweet potatoes' },
+  dessert: { label: 'dessert', plural: 'desserts', dot: 'var(--dessert)', eg: 'maple pecan pie' },
+  drink:   { label: 'drink',   plural: 'drinks',   dot: 'var(--drink)',   eg: 'a very good red' },
+  tbd:     { label: 'no clue yet', plural: 'still deciding', dot: 'var(--tbd)' },
+};
+const DECOR = ['candle', 'pear', 'glass', 'persimmon'];
+const DEMO = !CONFIG.endpoint;
+const $ = id => document.getElementById(id);
+
+/* ---------- saved on this phone ---------- */
+const STORE = 'friendsgiving-seat';
+const loadMine = () => { try { return JSON.parse(localStorage.getItem(STORE)) || null; } catch (e) { return null; } };
+const saveMine = v => { try { v ? localStorage.setItem(STORE, JSON.stringify(v)) : localStorage.removeItem(STORE); } catch (e) {} };
+
+/* ---------- talking to the Sheet (or a pretend table until it's connected) ---------- */
+const demo = {
+  seats: [
+    { id: 'd1', seat: 0, name: 'Maya', plus: '', category: 'side', dish: 'mashed potatoes' },
+    { id: 'd2', seat: 3, name: 'Theo', plus: 'Sam', category: 'dessert', dish: 'maple pecan pie' },
+    { id: 'd3', seat: 4, name: 'Priya', plus: '', category: 'drink', dish: 'a very good red' },
+    { id: 'd4', seat: 7, name: 'Jonah', plus: '', category: 'tbd', dish: '' },
+  ],
+  queue: [
+    { name: 'Lena', category: 'starter', dish: 'whipped feta + hot honey' },
+    { name: 'Marcus', category: 'side', dish: 'brown butter sweet potatoes' },
+    { name: 'Ana', category: 'dessert', dish: 'pumpkin tiramisu' },
+  ],
+  firstFree() { const t = new Set(this.seats.map(s => s.seat)); let i = 0; while (t.has(i)) i++; return i; },
+  call(body) {
+    if (body.action === 'remove') { this.seats = this.seats.filter(s => s.id !== body.id); return { ok: true, seats: this.seats }; }
+    if (body.action === 'me') { const s = this.seats.find(x => x.id === body.id); return s ? { ok: true, seat: s.seat, address: '' } : { ok: false }; }
+    const taken = this.seats.some(s => s.seat === body.seat && s.id !== body.id);
+    const old = this.seats.find(s => s.id === body.id);
+    const seat = taken || body.seat == null ? (old ? old.seat : this.firstFree()) : body.seat;
+    const row = { id: body.id || 'me' + Date.now(), seat, name: body.name, plus: body.plus || '', category: body.category, dish: body.category === 'tbd' ? '' : body.dish };
+    this.seats = this.seats.filter(s => s.id !== row.id).concat(row);
+    return { ok: true, id: row.id, token: 'demo', seat, address: '123 preview st (the real one goes here)', seats: this.seats };
+  },
+  tick() {
+    const next = this.queue.shift();
+    if (next) { this.seats = this.seats.concat({ id: 'q' + Date.now(), seat: this.firstFree(), plus: '', ...next }); apply(this.seats); }
+  },
+};
+
+async function post(body) {
+  if (DEMO) return demo.call(body);
+  const res = await fetch(CONFIG.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
+  return res.json();
+}
+
+/* ---------- live table ---------- */
+let table = [], mine = loadMine(), target = null, firstPaint = true, online = true;
+let writes = 0, polling = false;
+
+async function poll() {
+  if (DEMO || polling || document.hidden) return;
+  polling = true;
+  const began = writes;
+  try {
+    const res = await fetch(CONFIG.endpoint);
+    const data = await res.json();
+    online = true;
+    if (data.ok && began === writes && (firstPaint || JSON.stringify(data.seats) !== JSON.stringify(table))) apply(data.seats);
+    else renderTally();
+  } catch (e) {
+    online = false;
+    renderTally();
+  } finally {
+    polling = false;
+  }
+}
+
+function apply(seats) {
+  const before = new Map(table.map(s => [s.id, s]));
+  const arrivals = firstPaint ? [] : seats.filter(s => !before.has(s.id));
+  table = seats;
+  if (mine && !firstPaint && !seats.some(s => s.id === mine.id)) { mine = null; saveMine(null); $('address').hidden = true; }
+  render(new Set(arrivals.map(s => s.id)));
+  const news = arrivals.filter(s => !mine || s.id !== mine.id).pop();
+  if (news) toast(news.dish ? `${news.name} just brought ${news.dish}` : `${news.name} just pulled up a chair`);
+  firstPaint = false;
+}
+
+function seatCount() {
+  const top = table.reduce((n, s) => Math.max(n, s.seat + 1), 0);
+  const want = Math.max(6, Math.max(top, table.length) + 2);
+  return want + want % 2;
+}
+
+function seatEl(i, fresh) {
+  const who = table.find(s => s.seat === i);
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'seat';
+  b.dataset.seat = i;
+  b.style.setProperty('--tilt', ((i * 7) % 5 - 2) * .9 + 'deg');
+  const setting = document.createElement('div');
+  setting.className = 'setting';
+  setting.innerHTML = '<svg class="cutlery" aria-hidden="true"><use href="#fork"/></svg>';
+  const plate = document.createElement('div');
+  plate.className = 'plate';
+  setting.append(plate);
+  setting.insertAdjacentHTML('beforeend', '<svg class="cutlery" aria-hidden="true"><use href="#knife"/></svg>');
+  b.append(setting);
+
+  if (!who) {
+    b.classList.add('open');
+    plate.textContent = mine ? 'move here' : 'sit here';
+    b.setAttribute('aria-label', mine ? 'move to this seat' : 'take this seat');
+    return b;
+  }
+  const isMine = mine && who.id === mine.id;
+  plate.style.setProperty('--rim', CATS[who.category] ? CATS[who.category].dot : 'var(--line)');
+  plate.textContent = who.category === 'tbd' || !who.dish ? 'tbd' : who.dish;
+  if (!who.dish) plate.classList.add('tbd');
+  if (who.dish && who.dish.length > 24) plate.classList.add('long');
+  const place = document.createElement('div');
+  place.className = 'place';
+  place.textContent = who.plus ? `${who.name} + ${who.plus}` : who.name;
+  b.append(place);
+  if (isMine) b.classList.add('mine');
+  if (fresh.has(who.id)) b.classList.add('arrive');
+  b.setAttribute('aria-label', `${place.textContent}: ${who.dish || 'still deciding'}${isMine ? '. tap to change' : ''}`);
+  return b;
+}
+function render(fresh = new Set()) {
+  const wrap = document.createDocumentFragment();
+  const n = seatCount();
+  for (let i = 0; i < n; i += 2) {
+    const row = document.createElement('div');
+    row.className = 'row';
+    const decor = document.createElement('div');
+    decor.className = 'decor';
+    decor.setAttribute('aria-hidden', 'true');
+    decor.innerHTML = `<svg viewBox="0 0 62 134"><use href="#${DECOR[(i / 2) % DECOR.length]}"/></svg>`;
+    row.append(seatEl(i, fresh), decor, seatEl(i + 1, fresh));
+    wrap.append(row);
+  }
+  $('seats').replaceChildren(wrap);
+  $('pick').textContent = mine ? 'tap your plate to change it' : 'pick a plate, any plate';
+  renderTally();
+}
+
+function renderTally() {
+  const bar = $('tally');
+  bar.replaceChildren();
+  const live = document.createElement('span');
+  live.className = 'live' + (online ? '' : ' off');
+  live.innerHTML = '<i></i>';
+  live.append(DEMO ? 'preview' : online ? 'live' : 'reconnecting');
+  bar.append(live);
+  const people = table.reduce((n, s) => n + 1 + (s.plus ? 1 : 0), 0);
+  const total = document.createElement('span');
+  total.className = 'count';
+  total.innerHTML = `<b>${people}</b>`;
+  total.append(' at the table');
+  bar.append(total);
+  for (const key of Object.keys(CATS)) {
+    const c = table.filter(s => s.category === key).length;
+    if (!c) continue;
+    const el = document.createElement('span');
+    el.className = 'count';
+    el.style.setProperty('--dot', CATS[key].dot);
+    el.innerHTML = `<i></i><b>${c}</b>`;
+    el.append(' ' + (key === 'tbd' ? CATS[key].plural : c === 1 ? CATS[key].label : CATS[key].plural));
+    bar.append(el);
+  }
+}
+
+let toastTimer;
+function toast(text) {
+  const t = $('toast');
+  t.textContent = text;
+  t.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('on'), 3800);
+}
+
+/* ---------- the seat card ---------- */
+let category = null;
+
+function setCategory(key) {
+  category = key;
+  document.querySelectorAll('.cat').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.key === key)));
+  $('dish-wrap').hidden = key === 'tbd';
+  if (key && CATS[key].eg) $('dish').placeholder = CATS[key].eg;
+  hint();
+}
+
+const STOP = new Set(['with', 'and', 'the', 'very', 'good', 'some', 'homemade', 'famous', 'my', 'a', 'of', 'for']);
+const words = s => s.toLowerCase().split(/[^a-z]+/).filter(w => w.length > 2 && !STOP.has(w)).map(w => w.replace(/(es|s)$/, ''));
+function hint() {
+  const typed = words($('dish').value);
+  const twin = !$('dish-wrap').hidden && typed.length && table.find(s => s.dish && (!mine || s.id !== mine.id) && words(s.dish).some(w => typed.includes(w)));
+  $('hint').textContent = twin ? `heads up, ${twin.name}'s got ${twin.dish}.` : '';
+}
+
+function openSheet(seat) {
+  const me = mine && table.find(s => s.id === mine.id);
+  target = seat;
+  $('form').hidden = false;
+  $('done').hidden = true;
+  $('error').hidden = true;
+  $('sheet-title').textContent = me ? (seat !== me.seat ? 'new seat?' : 'your seat') : 'this one’s yours';
+  $('name').value = me ? me.name : '';
+  $('dish').value = me ? me.dish : '';
+  $('plus').value = me ? me.plus : '';
+  $('plus-wrap').hidden = !(me && me.plus);
+  $('plus-toggle').hidden = !!(me && me.plus);
+  setCategory(me ? me.category : null);
+  $('go').textContent = me ? 'save' : 'pull up a chair';
+  $('leave').hidden = !me;
+  $('dialog').showModal();
+  if (!me) $('name').focus();
+}
+
+function fail(message) {
+  $('error').textContent = message;
+  $('error').hidden = false;
+}
+
+async function submit(e) {
+  e.preventDefault();
+  const name = $('name').value.trim();
+  const dish = $('dish').value.trim();
+  if (!name) return fail('need a name for the place card.'), $('name').focus();
+  if (!category) return fail("pick what you're bringing, or “no clue yet.”");
+  if (category !== 'tbd' && !dish) return fail('what’s the dish?'), $('dish').focus();
+  const wasMine = !!mine;
+  const body = { action: 'save', seat: target, name, category, dish, plus: $('plus').value.trim() };
+  if (mine) { body.id = mine.id; body.token = mine.token; }
+  $('go').disabled = true;
+  $('error').hidden = true;
+  writes++;
+  try {
+    const res = await post(body);
+    if (!res.ok) {
+      if (res.error === 'not_yours') { mine = null; saveMine(null); return fail('that seat’s gone. pick a new plate.'); }
+      return fail('that didn’t save. try again?');
+    }
+    if (res.id) { mine = { id: res.id, token: res.token, address: res.address || '' }; saveMine(mine); }
+    showAddress();
+    apply(res.seats);
+    if (wasMine) { $('dialog').close(); toast('saved'); return; }
+    $('form').hidden = true;
+    $('done').hidden = false;
+    $('done-title').textContent = `you’re in, ${name}.`;
+    $('done-copy').textContent = res.seat !== target ? 'someone beat you to that plate, so you’re in the next open one. tap your plate to change anything.' : 'tap your plate anytime to change it.';
+    $('done-addr').textContent = mine.address;
+    $('done-addr').hidden = !mine.address;
+  } catch (err) {
+    fail('that didn’t save. check your signal and try again?');
+  } finally {
+    writes++;
+    $('go').disabled = false;
+  }
+}
+
+async function leave() {
+  if (!mine) return;
+  writes++;
+  try {
+    const res = await post({ action: 'remove', id: mine.id, token: mine.token });
+    if (res.ok) {
+      mine = null;
+      saveMine(null);
+      $('address').hidden = true;
+      apply(res.seats);
+      $('dialog').close();
+      toast('seat’s open again');
+    } else fail('that didn’t work. try again?');
+  } catch (err) {
+    fail('that didn’t work. try again?');
+  } finally {
+    writes++;
+  }
+}
+
+function showAddress() {
+  const a = mine && mine.address;
+  $('address').textContent = a || '';
+  $('address').hidden = !a;
+}
+
+/* ---------- start ---------- */
+$('eyebrow').textContent = CONFIG.eyebrow;
+$('when').textContent = CONFIG.when;
+$('where').textContent = CONFIG.where;
+
+for (const [key, c] of Object.entries(CATS)) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'cat';
+  b.dataset.key = key;
+  b.setAttribute('aria-pressed', 'false');
+  b.style.setProperty('--dot', c.dot);
+  b.innerHTML = '<i></i>';
+  b.append(c.label);
+  b.addEventListener('click', () => { setCategory(key); if (key !== 'tbd') $('dish').focus(); });
+  $('cats').append(b);
+}
+
+$('seats').addEventListener('click', e => {
+  const b = e.target.closest('.seat');
+  if (!b) return;
+  const i = Number(b.dataset.seat);
+  const who = table.find(s => s.seat === i);
+  if (!who || (mine && who.id === mine.id)) openSheet(i);
+  else toast(who.dish ? `${who.name}'s got ${who.dish}` : `${who.name}'s still deciding`);
+});
+$('form').addEventListener('submit', submit);
+$('dish').addEventListener('input', hint);
+$('leave').addEventListener('click', leave);
+$('close').addEventListener('click', () => $('dialog').close());
+$('done-go').addEventListener('click', () => $('dialog').close());
+$('dialog').addEventListener('click', e => { if (e.target === $('dialog')) $('dialog').close(); });
+$('plus-toggle').addEventListener('click', () => { $('plus-wrap').hidden = false; $('plus-toggle').hidden = true; $('plus').focus(); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) poll(); });
+
+if (DEMO) {
+  apply(demo.seats);
+  setInterval(() => demo.tick(), 9000);
+} else {
+  render();
+  poll();
+  setInterval(poll, CONFIG.poll);
+  if (mine && mine.token) {
+    post({ action: 'me', id: mine.id, token: mine.token }).then(res => {
+      if (res.ok) { mine.address = res.address || ''; saveMine(mine); showAddress(); }
+    }).catch(() => {});
+  }
+}
+</script>
+</body>
+</html>
