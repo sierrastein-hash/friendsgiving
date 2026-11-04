@@ -80,7 +80,8 @@
   .seat.open:hover .plate, .seat.open:focus-visible .plate { background: var(--plate); transform: scale(1.04) rotate(-2deg); }
   .seat.mine .place { background: var(--ink); color: var(--cream); }
   .seat.mine::after { content: 'you'; position: absolute; top: 4px; right: 12%; background: var(--persimmon); color: var(--cream); font-family: var(--hand); font-size: 19px; line-height: 1; padding: 1px 7px 3px; border-radius: 10px; transform: rotate(6deg); }
-  .seat .turkey { position: absolute; top: -1px; left: 6%; width: 52px; height: 43px; transform: rotate(-9deg); pointer-events: none; animation: gobble .5s .3s cubic-bezier(.2, 1.7, .4, 1) both; }
+  .seat .turkey { position: absolute; top: -1px; left: 6%; width: 52px; height: 43px; transform: rotate(-9deg); pointer-events: none; }
+  .seat.arrive .turkey { animation: gobble .5s .3s cubic-bezier(.2, 1.7, .4, 1) both; }
   @keyframes gobble { from { transform: scale(0) rotate(-40deg); } }
   .seat.arrive .plate { animation: set .55s cubic-bezier(.2, 1.5, .4, 1) both; }
   .seat.arrive .place { animation: card .4s .22s both; }
@@ -491,7 +492,9 @@ async function submit(e) {
   const plus = $('plus').value.trim();
   const body = { action: 'save', seat: target, name, dish, plus, plusDish: plus ? $('plus-dish').value.trim() : '' };
   if (mine) { body.id = mine.id; body.token = mine.token; }
+  const label = $('go').textContent;
   $('go').disabled = true;
+  $('go').textContent = 'setting your place…';
   $('error').hidden = true;
   writes++;
   try {
@@ -512,6 +515,7 @@ async function submit(e) {
   } finally {
     writes++;
     $('go').disabled = false;
+    $('go').textContent = label;
   }
 }
 
