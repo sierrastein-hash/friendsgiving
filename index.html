@@ -19,7 +19,6 @@
     --persimmon: #a9441f; --persimmon-bright: #cf6a2c; --cream: #f7eedc; --cloth: #f3e8d3;
     --check: rgba(169, 68, 31, .085); --ink: #2c1a12; --ink-soft: #6a5240; --plate: #fcf8ee;
     --oxblood: #6b1d1d; --olive: #5c6130; --mustard: #c88f1f; --plum: #4a2340; --line: #cdb99a;
-    --starter: var(--olive); --side: var(--persimmon); --dessert: var(--mustard); --drink: var(--plum); --tbd: var(--line);
     --hand: 'Reenie Beanie', 'Bradley Hand', cursive;
     --display: 'Fraunces', Georgia, serif;
     --body: 'DM Sans', system-ui, sans-serif;
@@ -43,8 +42,6 @@
   .pick { font-family: var(--hand); font-size: 30px; line-height: 1; display: flex; align-items: flex-end; gap: 8px; margin: 18px 0 2px; }
   .pick svg { width: 34px; height: 44px; flex: none; }
   .frieze { display: none; position: absolute; pointer-events: none; }
-  .address { margin-top: 12px; display: inline-block; background: var(--cream); color: var(--ink); border-radius: 4px; padding: 9px 13px; font-size: 15px; font-weight: 500; transform: rotate(-.6deg); }
-  .address[hidden] { display: none; }
 
   /* the cloth */
   .cloth {
@@ -73,8 +70,8 @@
   .seat { position: relative; display: flex; flex-direction: column; align-items: center; width: 100%; padding: 8px 0 14px; border-radius: 12px; -webkit-tap-highlight-color: transparent; }
   .setting { display: flex; align-items: center; justify-content: center; gap: 2px; }
   .cutlery { width: 11px; height: 74px; flex: none; color: var(--ink); opacity: .72; }
-  .plate { width: clamp(106px, 28vw, 136px); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; text-align: center; padding: 15%; font-family: var(--hand); font-size: 21px; line-height: .92; overflow-wrap: anywhere; background: var(--plate); border: 1.5px solid var(--ink); box-shadow: inset 0 0 0 5px var(--plate), inset 0 0 0 7.5px var(--rim, var(--line)); transition: transform .18s; }
-  .plate.long { font-size: 18px; }
+  .plate { --size: clamp(106px, 28vw, 136px); width: var(--size); height: var(--size); flex: none; overflow: hidden; border-radius: 50%; display: grid; grid-template-columns: minmax(0, 1fr); place-items: center; text-align: center; padding: calc(var(--size) * .17); font-family: var(--hand); font-size: 21px; line-height: .92; overflow-wrap: anywhere; background: var(--plate); border: 1.5px solid var(--ink); box-shadow: inset 0 0 0 5px var(--plate), inset 0 0 0 7.5px var(--rim, var(--line)); transition: transform .18s; }
+  .plate span { display: block; width: 100%; }
   .plate.tbd { color: var(--ink-soft); }
   .place { margin-top: -11px; position: relative; max-width: 96%; padding: 3px 11px 2px; background: #fff9ec; border: 1px solid var(--ink); border-radius: 2px; font-family: var(--display); font-size: 15px; line-height: 1.2; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 1.5px 2px 0 var(--ink); transform: rotate(var(--tilt, -1.5deg)); }
 
@@ -117,11 +114,9 @@
   input[type=text] { width: 100%; height: 48px; padding: 0 2px; background: none; border: 0; border-bottom: 1.5px solid var(--ink); border-radius: 0; font-family: var(--hand); font-size: 29px; outline: 0; }
   input[type=text]:focus { border-bottom-width: 2.5px; border-color: var(--persimmon); }
   input[type=text]::placeholder { color: #a8927a; }
-  .cats { display: flex; flex-wrap: wrap; gap: 7px; }
-  .cat { min-height: 42px; padding: 0 14px; border: 1.5px solid var(--ink); border-radius: 21px; font-size: 15px; font-weight: 500; display: inline-flex; align-items: center; gap: 7px; }
-  .cat i { width: 10px; height: 10px; border-radius: 50%; background: var(--dot); }
-  .cat[aria-pressed=true] { background: var(--ink); color: var(--cream); }
-  .hint { min-height: 20px; margin-top: 6px; font-size: 14px; color: var(--oxblood); }
+  .note { margin-top: 6px; font-size: 14px; color: var(--ink-soft); }
+  .hint { margin-top: 8px; font-size: 14px; color: var(--oxblood); }
+  .hint:empty { display: none; }
   .plus-toggle { margin-top: 12px; min-height: 40px; font-size: 15px; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; padding: 0; }
   .go { display: block; width: 100%; height: 54px; margin-top: 18px; background: var(--persimmon); color: var(--cream); border-radius: 4px; font-family: var(--display); font-size: 21px; font-weight: 500; box-shadow: 2.5px 3px 0 var(--ink); transition: transform .1s; }
   .go:active { transform: translate(2px, 2px); box-shadow: .5px 1px 0 var(--ink); }
@@ -129,7 +124,6 @@
   .leave { display: block; margin: 12px auto 0; min-height: 40px; font-size: 14px; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; }
   .error { color: var(--oxblood); font-size: 14px; font-weight: 500; margin-top: 10px; }
   .done p { font-size: 16px; line-height: 1.45; margin-top: 12px; }
-  .done .addr { background: var(--plate); border: 1.5px solid var(--ink); padding: 12px 14px; border-radius: 3px; font-weight: 500; }
   [hidden] { display: none !important; }
 
   @media (min-width: 880px) {
@@ -145,8 +139,7 @@
     .cloth::before { top: 0; bottom: 0; left: -13px; right: auto; width: 14px; height: auto; background: radial-gradient(circle at 14px 14px, var(--cloth) 13.5px, transparent 14px) 0 0 / 14px 28px repeat-y; }
     .table { max-width: 620px; }
     .row { grid-template-columns: minmax(0, 1fr) 76px minmax(0, 1fr); }
-    .plate { width: 150px; font-size: 25px; }
-    .plate.long { font-size: 21px; }
+    .plate { --size: 150px; font-size: 25px; }
     .place { font-size: 17px; }
     .decor svg { width: 62px; height: 134px; }
     .cutlery { height: 92px; width: 13px; }
@@ -179,7 +172,6 @@
     <p class="eyebrow" id="eyebrow"></p>
     <h1>friends<em>giving</em></h1>
     <p class="details"><strong id="when"></strong><span id="where"></span></p>
-    <p class="address" id="address" hidden></p>
     <p class="pick"><span id="pick">pick a plate, any plate</span>
       <svg viewBox="0 0 34 44" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3c-3 14 3 27 21 36"/><path d="M15 40l12-1-4-12"/></svg>
     </p>
@@ -211,20 +203,18 @@
       <label for="name">your name</label>
       <input type="text" id="name" maxlength="30" autocomplete="given-name" autocapitalize="words" placeholder="first name's fine">
 
-      <p class="label" id="cats-label">what's for the table?</p>
-      <div class="cats" id="cats" role="group" aria-labelledby="cats-label"></div>
-
-      <div id="dish-wrap">
-        <label for="dish">the dish</label>
-        <input type="text" id="dish" maxlength="44" autocomplete="off">
-      </div>
-      <p class="hint" id="hint"></p>
+      <label for="dish">what's for the table?</label>
+      <input type="text" id="dish" maxlength="30" autocomplete="off" placeholder="maple pecan pie">
+      <p class="note">not sure yet? leave it blank.</p>
 
       <button type="button" class="plus-toggle" id="plus-toggle">+ bringing someone</button>
       <div id="plus-wrap" hidden>
         <label for="plus">their name</label>
         <input type="text" id="plus" maxlength="30" autocomplete="off" autocapitalize="words">
+        <label for="plus-dish" id="plus-dish-label"></label>
+        <input type="text" id="plus-dish" maxlength="30" autocomplete="off" placeholder="a very good red">
       </div>
+      <p class="hint" id="hint"></p>
 
       <p class="error" id="error" role="alert" hidden></p>
       <button class="go" id="go" type="submit"></button>
@@ -234,7 +224,6 @@
     <div class="done" id="done" hidden>
       <h2 id="done-title"></h2>
       <p id="done-copy"></p>
-      <p class="addr" id="done-addr" hidden></p>
       <button class="go" id="done-go" type="button">see the table</button>
     </div>
   </div>
@@ -246,17 +235,10 @@ const CONFIG = {
   poll: 5000,
   eyebrow: "come eat at sierra's",
   when: 'sunday, november 15 · 4pm',
-  where: "at sierra's. address shows up once you've got a seat.",
+  where: '3398 S Oneida Way, Denver',
 };
 
-const CATS = {
-  starter: { label: 'starter', plural: 'starters', dot: 'var(--starter)', eg: 'whipped feta + hot honey' },
-  main:    { label: 'main',    plural: 'mains',    dot: 'var(--oxblood)', eg: 'a whole turkey, you hero' },
-  side:    { label: 'side',    plural: 'sides',    dot: 'var(--side)',    eg: 'brown butter sweet potatoes' },
-  dessert: { label: 'dessert', plural: 'desserts', dot: 'var(--dessert)', eg: 'maple pecan pie' },
-  drink:   { label: 'drink',   plural: 'drinks',   dot: 'var(--drink)',   eg: 'a very good red' },
-  tbd:     { label: 'no clue yet', plural: 'still deciding', dot: 'var(--tbd)' },
-};
+const RIMS = ['var(--persimmon)', 'var(--olive)', 'var(--mustard)', 'var(--plum)', 'var(--oxblood)'];
 const DECOR = ['candle', 'pear', 'glass', 'persimmon'];
 const DEMO = !CONFIG.endpoint;
 const $ = id => document.getElementById(id);
@@ -269,30 +251,29 @@ const saveMine = v => { try { v ? localStorage.setItem(STORE, JSON.stringify(v))
 /* ---------- talking to the Sheet (or a pretend table until it's connected) ---------- */
 const demo = {
   seats: [
-    { id: 'd1', seat: 0, name: 'Maya', plus: '', category: 'side', dish: 'mashed potatoes' },
-    { id: 'd2', seat: 3, name: 'Theo', plus: 'Sam', category: 'dessert', dish: 'maple pecan pie' },
-    { id: 'd3', seat: 4, name: 'Priya', plus: '', category: 'drink', dish: 'a very good red' },
-    { id: 'd4', seat: 7, name: 'Jonah', plus: '', category: 'tbd', dish: '' },
+    { id: 'd1', seat: 0, name: 'Maya', dish: 'mashed potatoes', plus: '', plusDish: '' },
+    { id: 'd2', seat: 3, name: 'Theo', dish: 'maple pecan pie', plus: 'Sam', plusDish: 'a very good red' },
+    { id: 'd3', seat: 4, name: 'Priya', dish: 'cider', plus: '', plusDish: '' },
+    { id: 'd4', seat: 7, name: 'Jonah', dish: '', plus: '', plusDish: '' },
   ],
   queue: [
-    { name: 'Lena', category: 'starter', dish: 'whipped feta + hot honey' },
-    { name: 'Marcus', category: 'side', dish: 'brown butter sweet potatoes' },
-    { name: 'Ana', category: 'dessert', dish: 'pumpkin tiramisu' },
+    { name: 'Lena', dish: 'whipped feta + hot honey' },
+    { name: 'Marcus', dish: 'brown butter sweet potatoes' },
+    { name: 'Ana', dish: 'pumpkin tiramisu' },
   ],
   firstFree() { const t = new Set(this.seats.map(s => s.seat)); let i = 0; while (t.has(i)) i++; return i; },
   call(body) {
     if (body.action === 'remove') { this.seats = this.seats.filter(s => s.id !== body.id); return { ok: true, seats: this.seats }; }
-    if (body.action === 'me') { const s = this.seats.find(x => x.id === body.id); return s ? { ok: true, seat: s.seat, address: '' } : { ok: false }; }
     const taken = this.seats.some(s => s.seat === body.seat && s.id !== body.id);
     const old = this.seats.find(s => s.id === body.id);
     const seat = taken || body.seat == null ? (old ? old.seat : this.firstFree()) : body.seat;
-    const row = { id: body.id || 'me' + Date.now(), seat, name: body.name, plus: body.plus || '', category: body.category, dish: body.category === 'tbd' ? '' : body.dish };
+    const row = { id: body.id || 'me' + Date.now(), seat, name: body.name, dish: body.dish, plus: body.plus, plusDish: body.plus ? body.plusDish : '' };
     this.seats = this.seats.filter(s => s.id !== row.id).concat(row);
-    return { ok: true, id: row.id, token: 'demo', seat, address: '123 preview st (the real one goes here)', seats: this.seats };
+    return { ok: true, id: row.id, token: 'demo', seat, seats: this.seats };
   },
   tick() {
     const next = this.queue.shift();
-    if (next) { this.seats = this.seats.concat({ id: 'q' + Date.now(), seat: this.firstFree(), plus: '', ...next }); apply(this.seats); }
+    if (next) { this.seats = this.seats.concat({ id: 'q' + Date.now(), seat: this.firstFree(), plus: '', plusDish: '', ...next }); apply(this.seats); }
   },
 };
 
@@ -303,6 +284,8 @@ async function post(body) {
 }
 
 /* ---------- live table ---------- */
+const dishes = s => [s.dish, s.plusDish].filter(Boolean).join(' + ');
+
 let table = [], mine = loadMine(), target = null, firstPaint = true, online = true;
 let writes = 0, polling = false;
 
@@ -328,10 +311,10 @@ function apply(seats) {
   const before = new Map(table.map(s => [s.id, s]));
   const arrivals = firstPaint ? [] : seats.filter(s => !before.has(s.id));
   table = seats;
-  if (mine && !firstPaint && !seats.some(s => s.id === mine.id)) { mine = null; saveMine(null); $('address').hidden = true; }
+  if (mine && !firstPaint && !seats.some(s => s.id === mine.id)) { mine = null; saveMine(null); }
   render(new Set(arrivals.map(s => s.id)));
   const news = arrivals.filter(s => !mine || s.id !== mine.id).pop();
-  if (news) toast(news.dish ? `${news.name} just brought ${news.dish}` : `${news.name} just pulled up a chair`);
+  if (news) toast(dishes(news) ? `${news.name} just brought ${dishes(news)}` : `${news.name} just pulled up a chair`);
   firstPaint = false;
 }
 
@@ -364,17 +347,18 @@ function seatEl(i, fresh) {
     return b;
   }
   const isMine = mine && who.id === mine.id;
-  plate.style.setProperty('--rim', CATS[who.category] ? CATS[who.category].dot : 'var(--line)');
-  plate.textContent = who.category === 'tbd' || !who.dish ? 'tbd' : who.dish;
-  if (!who.dish) plate.classList.add('tbd');
-  if (who.dish && who.dish.length > 24) plate.classList.add('long');
+  const food = dishes(who);
+  plate.style.setProperty('--rim', RIMS[i % RIMS.length]);
+  plate.innerHTML = '<span></span>';
+  plate.firstChild.textContent = food || 'tbd';
+  if (!food) plate.classList.add('tbd');
   const place = document.createElement('div');
   place.className = 'place';
   place.textContent = who.plus ? `${who.name} + ${who.plus}` : who.name;
   b.append(place);
   if (isMine) b.classList.add('mine');
   if (fresh.has(who.id)) b.classList.add('arrive');
-  b.setAttribute('aria-label', `${place.textContent}: ${who.dish || 'still deciding'}${isMine ? '. tap to change' : ''}`);
+  b.setAttribute('aria-label', `${place.textContent}: ${food || 'still deciding'}${isMine ? '. tap to change' : ''}`);
   return b;
 }
 function render(fresh = new Set()) {
@@ -391,8 +375,23 @@ function render(fresh = new Set()) {
     wrap.append(row);
   }
   $('seats').replaceChildren(wrap);
+  fitPlates();
   $('pick').textContent = mine ? 'tap your plate to change it' : 'pick a plate, any plate';
   renderTally();
+}
+
+// Plates stay round: long dishes get smaller handwriting instead of a bigger plate.
+function fitPlates() {
+  document.querySelectorAll('.plate span').forEach(text => {
+    const plate = text.parentElement;
+    plate.style.fontSize = '';
+    const room = plate.clientWidth * .66;
+    let size = parseFloat(getComputedStyle(plate).fontSize);
+    while (text.offsetHeight > room && size > 13) {
+      size -= 1;
+      plate.style.fontSize = size + 'px';
+    }
+  });
 }
 
 function renderTally() {
@@ -409,16 +408,18 @@ function renderTally() {
   total.innerHTML = `<b>${people}</b>`;
   total.append(' at the table');
   bar.append(total);
-  for (const key of Object.keys(CATS)) {
-    const c = table.filter(s => s.category === key).length;
-    if (!c) continue;
+  const count = (n, label, dot) => {
+    if (!n) return;
     const el = document.createElement('span');
     el.className = 'count';
-    el.style.setProperty('--dot', CATS[key].dot);
-    el.innerHTML = `<i></i><b>${c}</b>`;
-    el.append(' ' + (key === 'tbd' ? CATS[key].plural : c === 1 ? CATS[key].label : CATS[key].plural));
+    el.style.setProperty('--dot', dot);
+    el.innerHTML = `<i></i><b>${n}</b>`;
+    el.append(' ' + label);
     bar.append(el);
-  }
+  };
+  const made = table.reduce((n, s) => n + (s.dish ? 1 : 0) + (s.plusDish ? 1 : 0), 0);
+  count(made, made === 1 ? 'dish' : 'dishes', 'var(--persimmon-bright)');
+  count(table.filter(s => !s.dish).length, 'still deciding', 'var(--line)');
 }
 
 let toastTimer;
@@ -431,22 +432,16 @@ function toast(text) {
 }
 
 /* ---------- the seat card ---------- */
-let category = null;
-
-function setCategory(key) {
-  category = key;
-  document.querySelectorAll('.cat').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.key === key)));
-  $('dish-wrap').hidden = key === 'tbd';
-  if (key && CATS[key].eg) $('dish').placeholder = CATS[key].eg;
-  hint();
-}
-
 const STOP = new Set(['with', 'and', 'the', 'very', 'good', 'some', 'homemade', 'famous', 'my', 'a', 'of', 'for']);
 const words = s => s.toLowerCase().split(/[^a-z]+/).filter(w => w.length > 2 && !STOP.has(w)).map(w => w.replace(/(es|s)$/, ''));
 function hint() {
-  const typed = words($('dish').value);
-  const twin = !$('dish-wrap').hidden && typed.length && table.find(s => s.dish && (!mine || s.id !== mine.id) && words(s.dish).some(w => typed.includes(w)));
-  $('hint').textContent = twin ? `heads up, ${twin.name}'s got ${twin.dish}.` : '';
+  const typed = words($('dish').value + ' ' + $('plus-dish').value);
+  const twin = typed.length && table.find(s => (!mine || s.id !== mine.id) && words(dishes(s)).some(w => typed.includes(w)));
+  $('hint').textContent = twin ? `heads up, ${twin.name}'s got ${dishes(twin)}.` : '';
+}
+
+function guestLabel() {
+  $('plus-dish-label').textContent = `what's ${$('plus').value.trim() || 'your guest'} bringing?`;
 }
 
 function openSheet(seat) {
@@ -459,9 +454,11 @@ function openSheet(seat) {
   $('name').value = me ? me.name : '';
   $('dish').value = me ? me.dish : '';
   $('plus').value = me ? me.plus : '';
+  $('plus-dish').value = me ? me.plusDish : '';
+  guestLabel();
   $('plus-wrap').hidden = !(me && me.plus);
   $('plus-toggle').hidden = !!(me && me.plus);
-  setCategory(me ? me.category : null);
+  hint();
   $('go').textContent = me ? 'save' : 'pull up a chair';
   $('leave').hidden = !me;
   $('dialog').showModal();
@@ -478,10 +475,9 @@ async function submit(e) {
   const name = $('name').value.trim();
   const dish = $('dish').value.trim();
   if (!name) return fail('need a name for the place card.'), $('name').focus();
-  if (!category) return fail("pick what you're bringing, or “no clue yet.”");
-  if (category !== 'tbd' && !dish) return fail('what’s the dish?'), $('dish').focus();
   const wasMine = !!mine;
-  const body = { action: 'save', seat: target, name, category, dish, plus: $('plus').value.trim() };
+  const plus = $('plus').value.trim();
+  const body = { action: 'save', seat: target, name, dish, plus, plusDish: plus ? $('plus-dish').value.trim() : '' };
   if (mine) { body.id = mine.id; body.token = mine.token; }
   $('go').disabled = true;
   $('error').hidden = true;
@@ -492,16 +488,13 @@ async function submit(e) {
       if (res.error === 'not_yours') { mine = null; saveMine(null); return fail('that seat’s gone. pick a new plate.'); }
       return fail('that didn’t save. try again?');
     }
-    if (res.id) { mine = { id: res.id, token: res.token, address: res.address || '' }; saveMine(mine); }
-    showAddress();
+    if (res.id) { mine = { id: res.id, token: res.token }; saveMine(mine); }
     apply(res.seats);
     if (wasMine) { $('dialog').close(); toast('saved'); return; }
     $('form').hidden = true;
     $('done').hidden = false;
     $('done-title').textContent = `you’re in, ${name}.`;
     $('done-copy').textContent = res.seat !== target ? 'someone beat you to that plate, so you’re in the next open one. tap your plate to change anything.' : 'tap your plate anytime to change it.';
-    $('done-addr').textContent = mine.address;
-    $('done-addr').hidden = !mine.address;
   } catch (err) {
     fail('that didn’t save. check your signal and try again?');
   } finally {
@@ -518,7 +511,6 @@ async function leave() {
     if (res.ok) {
       mine = null;
       saveMine(null);
-      $('address').hidden = true;
       apply(res.seats);
       $('dialog').close();
       toast('seat’s open again');
@@ -530,29 +522,10 @@ async function leave() {
   }
 }
 
-function showAddress() {
-  const a = mine && mine.address;
-  $('address').textContent = a || '';
-  $('address').hidden = !a;
-}
-
 /* ---------- start ---------- */
 $('eyebrow').textContent = CONFIG.eyebrow;
 $('when').textContent = CONFIG.when;
 $('where').textContent = CONFIG.where;
-
-for (const [key, c] of Object.entries(CATS)) {
-  const b = document.createElement('button');
-  b.type = 'button';
-  b.className = 'cat';
-  b.dataset.key = key;
-  b.setAttribute('aria-pressed', 'false');
-  b.style.setProperty('--dot', c.dot);
-  b.innerHTML = '<i></i>';
-  b.append(c.label);
-  b.addEventListener('click', () => { setCategory(key); if (key !== 'tbd') $('dish').focus(); });
-  $('cats').append(b);
-}
 
 $('seats').addEventListener('click', e => {
   const b = e.target.closest('.seat');
@@ -560,16 +533,21 @@ $('seats').addEventListener('click', e => {
   const i = Number(b.dataset.seat);
   const who = table.find(s => s.seat === i);
   if (!who || (mine && who.id === mine.id)) openSheet(i);
-  else toast(who.dish ? `${who.name}'s got ${who.dish}` : `${who.name}'s still deciding`);
+  else toast(dishes(who) ? `${who.name}'s got ${dishes(who)}` : `${who.name}'s still deciding`);
 });
 $('form').addEventListener('submit', submit);
 $('dish').addEventListener('input', hint);
+$('plus-dish').addEventListener('input', hint);
+$('plus').addEventListener('input', guestLabel);
 $('leave').addEventListener('click', leave);
 $('close').addEventListener('click', () => $('dialog').close());
 $('done-go').addEventListener('click', () => $('dialog').close());
 $('dialog').addEventListener('click', e => { if (e.target === $('dialog')) $('dialog').close(); });
 $('plus-toggle').addEventListener('click', () => { $('plus-wrap').hidden = false; $('plus-toggle').hidden = true; $('plus').focus(); });
 document.addEventListener('visibilitychange', () => { if (!document.hidden) poll(); });
+
+document.fonts.ready.then(fitPlates);
+addEventListener('resize', fitPlates);
 
 if (DEMO) {
   apply(demo.seats);
@@ -578,11 +556,6 @@ if (DEMO) {
   render();
   poll();
   setInterval(poll, CONFIG.poll);
-  if (mine && mine.token) {
-    post({ action: 'me', id: mine.id, token: mine.token }).then(res => {
-      if (res.ok) { mine.address = res.address || ''; saveMine(mine); showAddress(); }
-    }).catch(() => {});
-  }
 }
 </script>
 </body>
